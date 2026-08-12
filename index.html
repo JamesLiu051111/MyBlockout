@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目01｜冰封之路</title>
+<link rel="stylesheet" href="project01.css">
+</head>
+<body>
+<header><div class="logo">LD<span>.</span></div><nav><a>首页</a><a>项目</a><a>文档</a></nav></header>
+
+<section class="hero">
+<video autoplay muted loop><source src="assets/videos/cover-video.mp4"></video>
+<div class="mask"></div>
+<div class="hero-text">
+<p>PROJECT 01 · UNREAL ENGINE 5</p>
+<h1>冰封之路</h1>
+<h3>Frozen Path</h3>
+<p>线性探索关卡设计</p>
+</div>
+</section>
+
+<section class="section">
+<div class="num">00</div><h2>项目介绍</h2>
+<div class="grid">
+<div>类型<br><b>线性叙事探索关卡</b></div>
+<div>职责<br><b>关卡设计师</b></div>
+<div>引擎<br><b>Unreal Engine 5</b></div>
+<div>玩法<br><b>冰冻能力 / 环境解谜</b></div>
+</div>
+</section>
+
+<section class="section blue"><div class="num">01</div><h2>设计理念</h2><p>参考生化危机系列与死亡空间，通过封闭空间探索、环境叙事和能力成长创造沉浸式线性体验。</p></section>
+
+<section class="section"><div class="num">02</div><h2>线性关卡流程设计</h2><p>探索 → 获得能力 → 学习机制 → 组合应用 → 挑战升级 → 最终区域</p>
+<div class="portfolio-gallery"><label class="add-btn">添加图片<input type="file" accept="image/*" multiple data-gallery="flow"></label><div id="gallery-flow" class="gallery-grid"></div></div></section>
+
+<section class="section blue"><div class="num">03</div><h2>冰冻能力系统</h2><p>玩家可以冻结水源改变环境，并使用冰制剑进行战斗和机关互动。</p>
+<div class="portfolio-gallery"><label class="add-btn">添加图片<input type="file" accept="image/*" multiple data-gallery="ability"></label><div id="gallery-ability" class="gallery-grid"></div></div></section>
+
+<section class="section"><div class="num">04</div><h2>玩家引导与空间设计</h2><p>利用灯光、视觉焦点和建筑结构引导玩家推进。</p>
+<div class="portfolio-gallery"><label class="add-btn">添加图片<input type="file" accept="image/*" multiple data-gallery="guidance"></label><div id="gallery-guidance" class="gallery-grid"></div></div></section>
+
+<section class="section blue"><div class="num">05</div><h2>Gameplay 与谜题设计</h2><video controls><source src="assets/videos/gameplay.mp4"></video></section>
+
+<section class="section"><div class="num">06</div><h2>环境叙事</h2>
+<div class="portfolio-gallery"><label class="add-btn">添加图片<input type="file" accept="image/*" multiple data-gallery="environment"></label><div id="gallery-environment" class="gallery-grid"></div></div></section>
+
+<section class="document"><h2>设计文档</h2><a href="assets/documents/LevelDesignDocument.pdf">查看 PDF →</a></section>
+
+<script>
+// ---------- 1. 管理员密码解锁逻辑 ----------
+const ADMIN_PASSWORD = "你的秘密密码"; // 请在此修改为你自己的密码
+
+window.addEventListener('keydown', (e) => {
+  // 按下快捷键 Ctrl + Shift + E 进入编辑授权
+  if (e.ctrlKey && e.shiftKey && e.key.toUpperCase() === 'E') {
+    const inputPwd = prompt('请输入管理员编辑密码：');
+    if (inputPwd === ADMIN_PASSWORD) {
+      document.body.classList.add('is-admin');
+      alert('已解锁编辑权限！现在可以添加和删除图片了。');
+    } else if (inputPwd !== null) {
+      alert('密码错误，无法启用编辑模式。');
+    }
+  }
+});
+
+// ---------- 2. IndexedDB 本地图片存储逻辑 ----------
+const DB="LDPortfolioImages";
+function db(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore("img",{keyPath:"id"});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+async function render(s){
+ const d=await db(), a=await new Promise((ok,no)=>{let r=d.transaction("img").objectStore("img").getAll();r.onsuccess=()=>ok(r.result.filter(x=>x.section===s));r.onerror=()=>no(r.error)});
+ const box=document.getElementById("gallery-"+s); if(!box)return; box.innerHTML="";
+ a.forEach(x=>{let c=document.createElement("div");c.className="gallery-item";let i=document.createElement("img");i.src=URL.createObjectURL(x.file);let b=document.createElement("button");b.textContent="删除";b.onclick=async()=>{let t=d.transaction("img","readwrite");t.objectStore("img").delete(x.id);t.oncomplete=()=>render(s)};c.append(i,b);box.append(c)})
+}
+document.querySelectorAll('input[data-gallery]').forEach(inp=>inp.onchange=async()=>{
+ const s=inp.dataset.gallery, d=await db();
+ for(const f of inp.files){let t=d.transaction("img","readwrite");t.objectStore("img").put({id:s+"_"+Date.now()+"_"+Math.random(),section:s,file:f});await new Promise(r=>t.oncomplete=r)}
+ inp.value="";render(s)
+});
+window.onload=()=>["flow","ability","guidance","environment"].forEach(render);
+</script>
+</body>
+</html>

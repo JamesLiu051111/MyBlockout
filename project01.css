@@ -1,0 +1,61 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080b12;color:white;font-family:'Microsoft YaHei',sans-serif}
+header{position:fixed;top:0;width:100%;padding:30px 8%;display:flex;justify-content:space-between;z-index:5}
+.logo{font-size:32px;font-weight:bold}
+.logo span{color:#66d9ff}
+nav a{margin-left:30px;color:white}
+.hero{height:100vh;position:relative}
+.hero video{width:100%;height:100%;object-fit:cover}
+.mask{position:absolute;inset:0;background:#080b1288}
+.hero-text{position:absolute;left:8%;bottom:15%}
+.hero-text h1{font-size:120px}
+.hero-text h3{color:#66d9ff;font-size:35px}
+.section{padding:120px 8%}
+.blue{background:#101827}
+.num{font-size:80px;color:#ff6138}
+h2{font-size:55px;margin:30px 0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.grid div{background:#151d2b;padding:30px}
+img,video{width:100%;margin-top:40px}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:30px}
+.document{text-align:center;padding:100px}
+.document a{color:#66d9ff}
+@media(max-width:900px){.grid,.gallery{grid-template-columns:1fr}.hero-text h1{font-size:70px}}
+
+/* 画廊与卡片样式 */
+.portfolio-gallery{margin-top:35px}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:22px}
+.gallery-item{position:relative;background:#0d131e;border-radius:10px;overflow:hidden}
+.gallery-item img{width:100%;display:block;margin:0}
+
+/* 默认隐藏编辑相关按钮（仅管理员可看到） */
+.add-btn,
+.gallery-item button {
+  display: none !important;
+}
+
+/* 授权成功后（带有 body.is-admin）展示按钮 */
+body.is-admin .add-btn {
+  display: inline-block !important;
+  padding:12px 22px;
+  border:1px solid #66d9ff;
+  color:#66d9ff;
+  cursor:pointer;
+}
+body.is-admin .add-btn input {
+  display:none;
+}
+body.is-admin .gallery-item button {
+  display: block !important;
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#ff6138;
+  color:#fff;
+  border:0;
+  padding:7px 12px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+@media(max-width:900px){.gallery-grid{grid-template-columns:1fr}}
